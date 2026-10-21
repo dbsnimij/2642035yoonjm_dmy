@@ -1,0 +1,6 @@
+{
+  "name": "PixelVerse Gallery — 2D 메타버스 전시관",
+  "description": "2x2 전시실과 중앙 회랑, 실시간 조명 연출, 인터랙티브 NPC 및 멀티미디어 전시물을 갖춘 2D 탑다운 픽셀 메타버스 전시 공간",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
