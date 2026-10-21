@@ -10,8 +10,8 @@ import {
   Pause,
   Upload,
 } from 'lucide-react';
-import { ExhibitItem, ExhibitType, VideoPresetId } from '../types/metaverse';
-import { ROOM_CONFIGS } from '../data/exhibitionData';
+import { ExhibitItem, ExhibitType, VideoPresetId } from './metaverse';
+import { ROOM_CONFIGS } from './exhibitionData';
 import { QinCeilingConstellationCanvas } from './QinCeilingConstellationCanvas';
 
 interface ExhibitModalProps {
