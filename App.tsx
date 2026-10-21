@@ -31,12 +31,12 @@ import {
   PlayerState,
   RoomId,
   StrictRoomId,
-} from './types/metaverse';
-import { MetaverseCanvas } from './components/MetaverseCanvas';
-import { VirtualJoystick } from './components/VirtualJoystick';
-import { ExhibitModal } from './components/ExhibitModal';
-import { QuestTracker } from './components/QuestTracker';
-import { soundEngine } from './utils/soundEngine';
+} from './metaverse';
+import { MetaverseCanvas } from './MetaverseCanvas';
+import { VirtualJoystick } from './VirtualJoystick';
+import { ExhibitModal } from './ExhibitModal';
+import { QuestTracker } from './QuestTracker';
+import { soundEngine } from './soundEngine';
 
 const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_v3';
 const ADMIN_PASSWORD_STORAGE_KEY = 'pixelverse_admin_pwd_v1';
