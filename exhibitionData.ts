@@ -3,12 +3,12 @@ import {
   ExhibitItem,
   NPCEntity,
   RoomConfig,
-} from '../types/metaverse';
+} from './metaverse';
 
-import cosmosImg from '../assets/images/exhibit_pixel_cosmos_1791347243340.jpg';
-import gardenImg from '../assets/images/exhibit_ancient_garden_1791347256494.jpg';
-import cyberImg from '../assets/images/exhibit_cyber_architecture_1791347269984.jpg';
-import mechanicalImg from '../assets/images/exhibit_mechanical_symphony_1791347280751.jpg';
+import cosmosImg from './exhibit_pixel_cosmos_1791347243340.jpg';
+import gardenImg from './exhibit_ancient_garden_1791347256494.jpg';
+import cyberImg from './exhibit_cyber_architecture_1791347269984.jpg';
+import mechanicalImg from './exhibit_mechanical_symphony_1791347280751.jpg';
 
 export const WORLD_WIDTH = 1280;
 export const WORLD_HEIGHT = 840;

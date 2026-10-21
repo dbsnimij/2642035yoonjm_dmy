@@ -8,7 +8,7 @@ import {
   Sparkles,
   RotateCcw,
 } from 'lucide-react';
-import { NPCEntity, StrictRoomId } from '../types/metaverse';
+import { NPCEntity, StrictRoomId } from './metaverse';
 
 interface QuestTrackerProps {
   npcs: NPCEntity[];

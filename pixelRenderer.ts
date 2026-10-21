@@ -4,7 +4,7 @@ import {
   ExhibitItem,
   NPCEntity,
   PlayerState,
-} from '../types/metaverse';
+} from './metaverse';
 
 /**
  * Draws a crisp pixel-art character (NPC or Player).
