@@ -24,7 +24,7 @@ import {
   INITIAL_EXHIBITS,
   INITIAL_NPCS,
   ROOM_CONFIGS,
-} from './data/exhibitionData';
+} from './exhibitionData';
 import {
   ExhibitItem,
   NPCEntity,
