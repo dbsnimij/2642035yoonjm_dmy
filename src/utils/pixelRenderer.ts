@@ -4,7 +4,7 @@ import {
   ExhibitItem,
   NPCEntity,
   PlayerState,
-} from './metaverse';
+} from '../types/metaverse';
 
 /**
  * Draws a crisp pixel-art character (NPC or Player).
@@ -948,15 +948,38 @@ export function drawPixelExhibit(
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fillRect(ix + 46 + waveX, iy + ih - 4, 3, 2); // Star reflection on mercury
       } else if (exhibit.roomId === 'room2') {
-        // Botanical courtyard & pond pixel art
-        ctx.fillStyle = '#064e3b';
+        // "10년간의 동원" - Ancient stone excavation, scaffolding & masonry construction site
+        ctx.fillStyle = '#44403c';
         ctx.fillRect(ix, iy, iw, ih);
-        ctx.fillStyle = '#34d399';
-        ctx.fillRect(ix + 8, iy + 2, 26, 16);
-        ctx.fillStyle = '#0284c7';
-        ctx.fillRect(ix + 36, iy + 12, 52, 10);
-        ctx.fillStyle = '#fb923c';
-        ctx.fillRect(ix + 52, iy + 15, 6, 3);
+
+        // Surrounding terrain
+        ctx.fillStyle = '#4d7c0f';
+        ctx.fillRect(ix, iy, 18, ih);
+        ctx.fillRect(ix + iw - 16, iy, 18, ih);
+
+        // Massive stone chamber structure
+        ctx.fillStyle = '#a8a29e';
+        ctx.fillRect(ix + 18, iy + 4, iw - 34, ih - 6);
+        ctx.fillStyle = '#1c1917';
+        ctx.fillRect(ix + 32, iy + 7, iw - 62, ih - 13);
+
+        // Wooden scaffolding & hoist beams
+        ctx.fillStyle = '#854d0e';
+        ctx.fillRect(ix + 16, iy + 2, 2, ih - 3);
+        ctx.fillRect(ix + 16, iy + 2, 14, 2);
+        ctx.fillRect(ix + iw - 20, iy + 3, 2, ih - 4);
+        ctx.fillRect(ix + iw - 24, iy + 8, 10, 1);
+
+        // Laborers & stone carts
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(ix + 8, iy + ih - 7, 3, 4);
+        ctx.fillRect(ix + 24, iy + ih - 6, 3, 4);
+        ctx.fillRect(ix + 44, iy + ih - 6, 3, 4);
+        ctx.fillRect(ix + iw - 12, iy + ih - 7, 3, 4);
+
+        ctx.fillStyle = '#e7e5e4';
+        ctx.fillRect(ix + 12, iy + ih - 5, 4, 3);
+        ctx.fillRect(ix + 48, iy + ih - 5, 4, 3);
       } else if (exhibit.roomId === 'room3') {
         // Cyber brutalist pavilion pixel art
         ctx.fillStyle = '#0f172a';
@@ -969,15 +992,78 @@ export function drawPixelExhibit(
         ctx.fillStyle = '#0284c7';
         ctx.fillRect(ix + 6, iy + 18, iw - 12, 5);
       } else {
-        // Clockwork brass gears pixel art
-        ctx.fillStyle = '#3b0764';
-        ctx.fillRect(ix, iy, iw, ih);
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(ix + 20, iy + 5, 16, 14);
-        ctx.fillStyle = '#ec4899';
-        ctx.fillRect(ix + 44, iy + 7, 14, 12);
-        ctx.fillStyle = '#fde68a';
-        ctx.fillRect(ix + 64, iy + 6, 18, 14);
+        // Room 4: Great Wall exhibits
+        if (exhibit.id === 'ex_r4_video' || exhibit.title.includes('우주')) {
+          // "우주에서 본 만리장성?!" - Deep space, Earth curve, UFO with alien & telescope
+          ctx.fillStyle = '#050814';
+          ctx.fillRect(ix, iy, iw, ih);
+
+          // Deep space stars
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ix + 10, iy + 4, 1, 1);
+          ctx.fillRect(ix + 26, iy + 14, 1, 1);
+          ctx.fillRect(ix + 52, iy + 6, 1, 1);
+          ctx.fillRect(ix + 78, iy + 12, 1, 1);
+
+          // Planet Earth curve on right
+          ctx.fillStyle = '#1d4ed8';
+          ctx.beginPath();
+          ctx.arc(ix + iw + 8, iy + ih / 2, 22, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#22c55e';
+          ctx.fillRect(ix + iw - 12, iy + 6, 8, 12);
+
+          // UFO flying saucer
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(ix + 16, iy + 10, 22, 5);
+          ctx.fillStyle = '#84cc16';
+          ctx.fillRect(ix + 20, iy + 15, 14, 2);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(ix + 22, iy + 6, 10, 4);
+
+          // Green Alien head & telescope
+          ctx.fillStyle = '#22c55e';
+          ctx.fillRect(ix + 25, iy + 7, 4, 3);
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillRect(ix + 28, iy + 7, 10, 2);
+        } else {
+          // "만리장성의 또 다른 목적" - Rolling green mountains, Great Wall & Nomadic yurt
+          ctx.fillStyle = '#93c5fd';
+          ctx.fillRect(ix, iy, iw, ih);
+
+          // Green mountain hills
+          ctx.fillStyle = '#15803d';
+          ctx.beginPath();
+          ctx.moveTo(ix, iy + ih);
+          ctx.lineTo(ix, iy + 11);
+          ctx.lineTo(ix + 35, iy + 5);
+          ctx.lineTo(ix + 70, iy + 12);
+          ctx.lineTo(ix + iw, iy + 6);
+          ctx.lineTo(ix + iw, iy + ih);
+          ctx.closePath();
+          ctx.fill();
+
+          // Great Wall stone path & watchtower
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(ix + 20, iy + 16);
+          ctx.lineTo(ix + 50, iy + 9);
+          ctx.lineTo(ix + 85, iy + 13);
+          ctx.stroke();
+
+          // Watchtower fortress
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fillRect(ix + 48, iy + 6, 7, 7);
+          ctx.fillStyle = '#475569';
+          ctx.fillRect(ix + 50, iy + 8, 3, 4);
+
+          // White Yurt tent in meadow & nomadic shepherd
+          ctx.fillStyle = '#f8fafc';
+          ctx.fillRect(ix + 8, iy + ih - 7, 7, 5);
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(ix + 18, iy + ih - 6, 2, 5);
+        }
       }
     } else if (type === 'video') {
       // Live animated pixel screen right on the gallery wall matching exhibit contents!
@@ -1151,10 +1237,38 @@ export function drawPixelExhibit(
       const blink = Math.floor(time * 2) % 2 === 0;
       ctx.fillStyle = blink ? '#ef4444' : '#7f1d1d';
       ctx.fillRect(ix + 4, iy + 3, 5, 5);
+    } else if (type === 'text') {
+      // Wall-mounted classical inscription / historical text tablet
+      const ix = x + 6;
+      const iy = y + 6;
+      const iw = width - 12;
+      const ih = height - 12;
+
+      ctx.fillStyle = '#1c1917'; // Antique stone slate
+      ctx.fillRect(ix, iy, iw, ih);
+
+      // Inscribed border line
+      ctx.strokeStyle = '#78716c';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(ix + 2, iy + 2, iw - 4, ih - 4);
+
+      // Engraved gold/amber header text line
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(ix + 6, iy + 5, iw - 28, 2);
+
+      // Etched text lines on stone tablet
+      ctx.fillStyle = '#d6d3d1';
+      ctx.fillRect(ix + 6, iy + 10, iw - 12, 1.5);
+      ctx.fillRect(ix + 6, iy + 14, iw - 18, 1.5);
+      ctx.fillRect(ix + 6, iy + 18, iw - 14, 1.5);
+
+      // Subtle royal seal / stamp at corner
+      ctx.fillStyle = '#dc2626';
+      ctx.fillRect(ix + iw - 10, iy + 4, 4, 4);
     }
 
     // Type badge below wall frame
-    const badgeText = type === 'image' ? '🖼 이미지 전시' : '🎬 영상 전시';
+    const badgeText = type === 'image' ? '🖼 이미지 전시' : type === 'text' ? '📜 텍스트 전시' : '🎬 영상 전시';
     ctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = isNearby ? '#fef08a' : '#cbd5e1';

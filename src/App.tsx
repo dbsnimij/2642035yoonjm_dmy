@@ -24,19 +24,20 @@ import {
   INITIAL_EXHIBITS,
   INITIAL_NPCS,
   ROOM_CONFIGS,
-} from './exhibitionData';
+} from './data/exhibitionData';
 import {
   ExhibitItem,
+  ExhibitType,
   NPCEntity,
   PlayerState,
   RoomId,
   StrictRoomId,
-} from './metaverse';
-import { MetaverseCanvas } from './MetaverseCanvas';
-import { VirtualJoystick } from './VirtualJoystick';
-import { ExhibitModal } from './ExhibitModal';
-import { QuestTracker } from './QuestTracker';
-import { soundEngine } from './soundEngine';
+} from './types/metaverse';
+import { MetaverseCanvas } from './components/MetaverseCanvas';
+import { VirtualJoystick } from './components/VirtualJoystick';
+import { ExhibitModal } from './components/ExhibitModal';
+import { QuestTracker } from './components/QuestTracker';
+import { soundEngine } from './utils/soundEngine';
 
 const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_v3';
 const ADMIN_PASSWORD_STORAGE_KEY = 'pixelverse_admin_pwd_v1';
@@ -63,19 +64,68 @@ function loadSavedExhibits(): ExhibitItem[] {
     if (!raw) return INITIAL_EXHIBITS;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return INITIAL_EXHIBITS.map((initialItem) => {
+      const loaded = INITIAL_EXHIBITS.map((initialItem) => {
         const savedItem = parsed.find((p: any) => p && p.id === initialItem.id);
         if (!savedItem) return initialItem;
+
+        // "능선을 따라 뻗은 만리장성" (ex_r4_image) is strictly text with no imageUrl
+        if (initialItem.id === 'ex_r4_image') {
+          return {
+            ...initialItem,
+            ...savedItem,
+            type: 'text' as const,
+            title: savedItem.title && !savedItem.title.includes('부역') ? savedItem.title : '능선을 따라 뻗은 만리장성',
+            imageUrl: undefined,
+            textContent: savedItem.textContent || initialItem.textContent,
+          };
+        }
+
+        const isTargetUpdatedExhibit =
+          initialItem.id === 'ex_r2_image' ||
+          initialItem.id === 'ex_r4_video' ||
+          initialItem.id === 'ex_r4_text';
         const isCustomImage =
+          !isTargetUpdatedExhibit &&
           savedItem.imageUrl &&
           (savedItem.imageUrl.startsWith('data:') || savedItem.imageUrl.startsWith('http'));
+
+        let title = savedItem.title || initialItem.title;
+        let imageUrl = isCustomImage ? savedItem.imageUrl : initialItem.imageUrl;
+
+        if (initialItem.id === 'ex_r2_image' && (!savedItem.title || savedItem.title.includes('부역'))) {
+          title = initialItem.title;
+        } else if (initialItem.id === 'ex_r4_text') {
+          title = '만리장성의 또 다른 목적';
+          imageUrl = initialItem.imageUrl; // 2사진 (유목민 목동 & 게르)
+        } else if (initialItem.id === 'ex_r4_video') {
+          title = '우주에서 본 만리장성?!';
+          imageUrl = initialItem.imageUrl; // 1사진 (외계인 우주선 망원경)
+        }
+
+        const itemType: ExhibitType = savedItem.type || initialItem.type;
+
+        const finalImageUrl =
+          initialItem.id === 'ex_r4_image'
+            ? undefined
+            : initialItem.id === 'ex_r4_text'
+            ? initialItem.imageUrl
+            : (imageUrl || initialItem.imageUrl);
+
         return {
           ...initialItem,
           ...savedItem,
-          imageUrl: isCustomImage ? savedItem.imageUrl : initialItem.imageUrl,
+          type: itemType,
+          title,
+          imageUrl: finalImageUrl,
           textContent: savedItem.textContent || initialItem.textContent,
         };
       });
+
+      try {
+        localStorage.setItem(EXHIBITS_STORAGE_KEY, JSON.stringify(loaded));
+      } catch {}
+
+      return loaded;
     }
   } catch (err) {
     console.error('Failed to load exhibits from localStorage:', err);
@@ -133,13 +183,14 @@ export default function App() {
 
   // Inline Catalog editing state
   const [inlineEditingId, setInlineEditingId] = useState<string | null>(null);
+  const [inlineType, setInlineType] = useState<ExhibitType>('text');
   const [inlineTitle, setInlineTitle] = useState<string>('');
   const [inlineArtist, setInlineArtist] = useState<string>('');
   const [inlineDescription, setInlineDescription] = useState<string>('');
   const [catalogToast, setCatalogToast] = useState<string | null>(null);
   const [questToast, setQuestToast] = useState<string | null>(null);
 
-  // Admin password & authorization state (관리자만 수정 가능하도록 숨김처리)
+  // Admin password & authorization state (관리자 비밀번호 인증으로 보호)
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showAdminLoginModal, setShowAdminLoginModal] = useState<boolean>(false);
   const [adminPasswordInput, setAdminPasswordInput] = useState<string>('');
@@ -296,7 +347,7 @@ export default function App() {
       saveExhibitsToStorage(next);
       return next;
     });
-    setSelectedExhibit(itemWithTime);
+    setSelectedExhibit((prev) => (prev ? itemWithTime : null));
   };
 
   const handleResetExhibits = () => {
@@ -799,10 +850,56 @@ export default function App() {
                             className="p-3 rounded bg-slate-900 border border-slate-800 space-y-2.5 transition-all"
                           >
                             {isEditingThis ? (
-                              <div className="space-y-3 bg-slate-950/80 p-3 rounded border border-amber-500/50">
-                                <div className="flex items-center justify-between text-xs text-amber-400 font-semibold border-b border-slate-800 pb-1.5">
+                              <div className="space-y-3 bg-slate-950/80 p-3.5 rounded border-2 border-amber-500/60 shadow-lg">
+                                <div className="flex items-center justify-between text-xs text-amber-400 font-semibold border-b border-slate-800 pb-2">
                                   <span>전시물 빠른 수정 및 도록 저장</span>
+                                  <span className="text-[10px] text-amber-300/80 font-normal">
+                                    [저장] 클릭 시 즉시 영구 저장됩니다
+                                  </span>
                                 </div>
+
+                                {/* Media Type Selector */}
+                                <div>
+                                  <label className="block text-[11px] font-medium text-slate-300 mb-1.5">
+                                    전시물 형식 (유형 선택)
+                                  </label>
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => setInlineType('text')}
+                                      className={`px-3 py-1.5 text-xs rounded border transition-colors cursor-pointer font-medium ${
+                                        inlineType === 'text'
+                                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
+                                          : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                                      }`}
+                                    >
+                                      📜 텍스트 버전
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setInlineType('image')}
+                                      className={`px-3 py-1.5 text-xs rounded border transition-colors cursor-pointer font-medium ${
+                                        inlineType === 'image'
+                                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
+                                          : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                                      }`}
+                                    >
+                                      🖼 이미지 버전
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setInlineType('video')}
+                                      className={`px-3 py-1.5 text-xs rounded border transition-colors cursor-pointer font-medium ${
+                                        inlineType === 'video'
+                                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
+                                          : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                                      }`}
+                                    >
+                                      🎬 영상 버전
+                                    </button>
+                                  </div>
+                                </div>
+
                                 <div>
                                   <label className="block text-[11px] font-medium text-slate-300 mb-1">
                                     명칭 (제목)
@@ -829,7 +926,7 @@ export default function App() {
                                 </div>
                                 <div>
                                   <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                                    상세 설명 (본문)
+                                    상세 설명 (본문 내용)
                                   </label>
                                   <textarea
                                     rows={3}
@@ -851,7 +948,7 @@ export default function App() {
                                     }}
                                     className="text-[11px] text-amber-400 hover:underline cursor-pointer"
                                   >
-                                    이미지/영상 파일 교체 →
+                                    상세 편집창 (미디어 파일/인용구) →
                                   </button>
                                   <div className="flex items-center gap-2">
                                     <button
@@ -866,27 +963,49 @@ export default function App() {
                                       onClick={() => {
                                         const now = new Date();
                                         const formattedDate = `${now.getFullYear()}. ${(now.getMonth() + 1).toString().padStart(2, '0')}. ${now.getDate().toString().padStart(2, '0')}. ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                                        const paragraphs = inlineDescription
+                                          .split(/\n+/)
+                                          .map((p) => p.trim())
+                                          .filter(Boolean);
                                         const updatedTextContent = ex.textContent
                                           ? {
                                               ...ex.textContent,
-                                              paragraphs: inlineDescription
-                                                .split(/\n+/)
-                                                .map((p) => p.trim())
-                                                .filter(Boolean),
+                                              leadQuote: ex.textContent.leadQuote || `“${inlineTitle.trim() || ex.title}”`,
+                                              paragraphs:
+                                                paragraphs.length > 0
+                                                  ? paragraphs
+                                                  : ex.textContent.paragraphs,
                                             }
-                                          : undefined;
+                                          : {
+                                              leadQuote: `“${inlineTitle.trim() || ex.title}”`,
+                                              paragraphs:
+                                                paragraphs.length > 0
+                                                  ? paragraphs
+                                                  : [inlineDescription.trim() || ex.description],
+                                              curatorNote: '도록에서 편집된 텍스트 전시물입니다.',
+                                            };
                                         const updated: ExhibitItem = {
                                           ...ex,
+                                          type: inlineType,
                                           title: inlineTitle.trim() || ex.title,
                                           artist: inlineArtist.trim(),
                                           description: inlineDescription.trim() || ex.description,
-                                          textContent: updatedTextContent || ex.textContent,
+                                          textContent: updatedTextContent,
+                                          imageUrl: ex.id === 'ex_r4_image' ? undefined : ex.imageUrl,
                                           isCustomized: true,
                                           lastModified: formattedDate,
                                         };
                                         handleUpdateExhibit(updated);
                                         setInlineEditingId(null);
-                                        setCatalogToast(`'${updated.title}' 수정 내용이 전시 도록에 안전하게 저장되었습니다!`);
+                                        const typeLabel =
+                                          inlineType === 'text'
+                                            ? '텍스트 버전'
+                                            : inlineType === 'video'
+                                            ? '영상 버전'
+                                            : '이미지 버전';
+                                        setCatalogToast(
+                                          `'${updated.title}' (${typeLabel}) 변경 사항이 전시 도록과 전시관에 즉시 안전하게 저장되었습니다!`
+                                        );
                                         setTimeout(() => setCatalogToast(null), 3500);
                                       }}
                                       className="flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded bg-amber-500 hover:bg-amber-400 text-slate-950 cursor-pointer shadow"
@@ -904,6 +1023,13 @@ export default function App() {
                                     <div className="flex flex-wrap items-baseline gap-2">
                                       <span className="text-xs font-semibold text-slate-100">
                                         {ex.title}
+                                      </span>
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700 font-mono">
+                                        {ex.type === 'text'
+                                          ? '📜 텍스트'
+                                          : ex.type === 'video'
+                                          ? '🎬 영상'
+                                          : '🖼 이미지'}
                                       </span>
                                       {ex.lastModified && (
                                         <span className="text-[10px] text-slate-500 font-normal">
@@ -935,6 +1061,7 @@ export default function App() {
                                         type="button"
                                         onClick={() => {
                                           setInlineEditingId(ex.id);
+                                          setInlineType(ex.type);
                                           setInlineTitle(ex.title);
                                           setInlineArtist(ex.artist || '');
                                           setInlineDescription(ex.description);

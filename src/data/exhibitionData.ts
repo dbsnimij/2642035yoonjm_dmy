@@ -3,12 +3,15 @@ import {
   ExhibitItem,
   NPCEntity,
   RoomConfig,
-} from './metaverse';
+} from '../types/metaverse';
 
-import cosmosImg from './exhibit_pixel_cosmos_1791347243340.jpg';
-import gardenImg from './exhibit_ancient_garden_1791347256494.jpg';
-import cyberImg from './exhibit_cyber_architecture_1791347269984.jpg';
-import mechanicalImg from './exhibit_mechanical_symphony_1791347280751.jpg';
+import cosmosImg from '../assets/images/exhibit_pixel_cosmos_1791347243340.jpg';
+import gardenImg from '../assets/images/exhibit_ancient_garden_1791347256494.jpg';
+import cyberImg from '../assets/images/exhibit_cyber_architecture_1791347269984.jpg';
+import mechanicalImg from '../assets/images/exhibit_mechanical_symphony_1791347280751.jpg';
+import mobilizationImg from '../assets/images/exhibit_10years_mobilization.png';
+import greatwallSpaceImg from '../assets/images/exhibit_greatwall_space.jpg';
+import greatwallPurposeImg from '../assets/images/exhibit_greatwall_purpose.jpg';
 
 export const WORLD_WIDTH = 1280;
 export const WORLD_HEIGHT = 840;
@@ -241,14 +244,14 @@ export const INITIAL_EXHIBITS: ExhibitItem[] = [
     width: 110,
     height: 36,
     interactRadius: 85,
-    title: '부역으로 징발되는 농촌 마을의 비극',
-    subtitle: '제2전시실 풍속 회화 (고대)',
+    title: '10년간의 동원',
+    subtitle: '제2전시실 대규모 축조 기록화 (고대)',
     artist: '고대 민초 사료집',
     year: 'B.C. 215',
-    medium: '진나라 둔전 마을 수묵 담채화',
+    medium: '진나라 대규모 토목공사 부역 기록화',
     description:
-      '남정네들이 만리장성 축조와 황릉 공사로 끝없이 끌려가 황폐해진 진나라 농촌 마을의 애환을 그린 회화입니다.',
-    imageUrl: gardenImg,
+      '남정네들이 만리장성 축조와 황릉 공사로 10년간 끝없이 끌려가 토목공사에 동원된 백성들의 애환과 거대한 축조 현장을 기록한 픽셀 회화입니다.',
+    imageUrl: mobilizationImg,
     frameColor: '#f59e0b',
     accentColor: '#fde68a',
   },
@@ -382,42 +385,53 @@ export const INITIAL_EXHIBITS: ExhibitItem[] = [
   {
     id: 'ex_r4_image',
     roomId: 'room4',
-    type: 'image',
+    type: 'text',
     placement: 'wall',
     x: 810,
     y: 436,
     width: 110,
     height: 36,
     interactRadius: 85,
-    title: '능선을 따라 뻗은 명대(明代) 만리장성',
-    subtitle: '제4전시실 유적 연구 (현대)',
-    artist: '세계문화유산 아카이브',
-    year: '2026',
-    medium: '벽돌과 석재로 완성된 팔달령 장성 파노라마',
+    title: '능선을 따라 뻗은 만리장성',
+    subtitle: '제4전시실 고대 축조와 지세 연구 (텍스트)',
+    artist: '고대 장성 지리지 학술 아카이브',
+    year: 'B.C. 214~현재',
+    medium: '자연 능선 판축 토성과 명대 석축 장성 비교 고증',
     description:
-      '오늘날 우리가 관광지로 방문하는 단단한 벽돌 성벽과 망루 형태는 진나라 때가 아니라 명나라 시기에 대대적으로 개축·완성된 구조물입니다.',
-    imageUrl: mechanicalImg,
+      '오늘날 우리가 관광지로 방문하는 단단한 벽돌 성벽과 망루 형태는 진나라 때가 아니라 명나라 시기에 대대적으로 개축·완성된 구조물입니다. 진나라 당시의 본래 장성은 험준한 산악 능선과 자연 단애를 방어선 삼아 흙을 다져 쌓은 판축(版築) 토성이었습니다.',
+    imageUrl: undefined,
+    textContent: {
+      leadQuote:
+        '“능선을 따라 굽이치는 거대한 용 — 험준한 산맥 자체가 천연의 요새이자 성벽이었다.”',
+      paragraphs: [
+        '우리가 흔히 사진에서 보는 웅장한 벽돌 성벽과 성루는 대부분 명나라(1368~1644) 시기에 개축·보강된 유적입니다.',
+        '진시황 시기의 원래 장성은 주로 판축(版築, 흙을 다져 쌓음) 공법으로 축조된 토성으로, 험준한 지형 능선과 자연 단애를 방어선으로 적극 활용하였습니다.',
+        '진나라 장성은 군사적 요충지에 감시망과 봉화대를 유기적으로 연결하여, 적은 병력으로도 광활한 북방 국경을 효과적으로 경계할 수 있는 정보 전달 네트워크 체계였습니다.',
+      ],
+      curatorNote:
+        '자연 지세를 이용해 축조된 장성의 축조 공법과 고대 방어 전략을 텍스트 자료로 고찰합니다.',
+    },
     frameColor: '#10b981',
     accentColor: '#a7f3d0',
   },
   {
     id: 'ex_r4_video',
     roomId: 'room4',
-    type: 'video',
+    type: 'image',
     placement: 'wall',
     x: 1070,
     y: 436,
     width: 116,
     height: 36,
     interactRadius: 85,
-    title: '인공위성 고해상도 궤도 관측 레이더',
-    subtitle: '우주에서 장성이 보인다는 루머의 과학적 검증',
+    title: '우주에서 본 만리장성?!',
+    subtitle: '우주에서 장성이 보인다는 루머의 유쾌한 검증',
     artist: '지구관측위성 센터 (EOSC)',
     year: '2026',
-    medium: 'SAR 레이더 및 광학 위성 영상',
+    medium: '우주선 망원경 관측 상상 픽셀 일러스트',
     description:
-      '만리장성의 폭은 평균 수 미터에 불과하여 우주정거장이나 달에서 육안으로 본다는 것은 광학적으로 불가능함을 입증하는 위성 데이터입니다.',
-    videoPreset: 'clockwork_pulse',
+      '외계인이 우주선에서 망원경으로 지구를 찾아봐도 만리장성은 폭이 수 미터에 불과하여 육안으로 볼 수 없다는 유쾌한 상상을 담은 픽셀 아트입니다. 실제 과학적으로도 우주에서 육안 관측은 불가능합니다.',
+    imageUrl: greatwallSpaceImg,
     frameColor: '#059669',
     accentColor: '#6ee7b7',
   },
@@ -431,13 +445,14 @@ export const INITIAL_EXHIBITS: ExhibitItem[] = [
     width: 76,
     height: 52,
     interactRadius: 78,
-    title: '만리장성의 군사·통상사 연구 논문',
+    title: '만리장성의 또 다른 목적',
     subtitle: '방어선이자 실크로드 관문의 두 얼굴',
     artist: '국제 동아시아 사학회',
     year: '2026',
-    medium: '학술 심포지엄 논문집',
+    medium: '장성 너머 유목민의 일상과 국경 교역로 픽셀 아트',
     description:
-      '만리장성은 북방 유목민족의 침략을 막는 군사적 목적 외에도, 관세를 징수하고 비단길의 무역로를 통제하기 위한 국경 세관의 역할을 수행했습니다.',
+      '만리장성은 북방 유목민족의 침략을 막는 군사적 목적 외에도, 관세를 징수하고 비단길의 무역로를 통제하며 농경민과 유목민의 평화로운 교역을 유도하기 위한 또 다른 목적을 지니고 있었습니다.',
+    imageUrl: greatwallPurposeImg,
     textContent: {
       leadQuote:
         '“장성은 벽(Wall)인 동시에 문(Gate)이었다. 교역을 통제하는 거대한 국경 통제선이었다.”',

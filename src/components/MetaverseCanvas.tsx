@@ -6,7 +6,7 @@ import {
   ROOM_CONFIGS,
   WORLD_HEIGHT,
   WORLD_WIDTH,
-} from './exhibitionData';
+} from '../data/exhibitionData';
 import {
   DoorEntity,
   ExhibitItem,
@@ -15,7 +15,7 @@ import {
   RectBox,
   RoomId,
   StrictRoomId,
-} from './metaverse';
+} from '../types/metaverse';
 import {
   drawPixelDoor,
   drawPixelExhibit,
@@ -24,8 +24,8 @@ import {
   drawSpeechBubble,
   getCardinalDirection,
   getSpeechBubbleBounds,
-} from './pixelRenderer';
-import { soundEngine } from './soundEngine';
+} from '../utils/pixelRenderer';
+import { soundEngine } from '../utils/soundEngine';
 
 interface MetaverseCanvasProps {
   zoom: number;

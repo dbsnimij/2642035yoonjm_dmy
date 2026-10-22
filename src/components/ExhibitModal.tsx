@@ -10,8 +10,8 @@ import {
   Pause,
   Upload,
 } from 'lucide-react';
-import { ExhibitItem, ExhibitType, VideoPresetId } from './metaverse';
-import { ROOM_CONFIGS } from './exhibitionData';
+import { ExhibitItem, ExhibitType, VideoPresetId } from '../types/metaverse';
+import { ROOM_CONFIGS } from '../data/exhibitionData';
 import { QinCeilingConstellationCanvas } from './QinCeilingConstellationCanvas';
 
 interface ExhibitModalProps {
@@ -788,7 +788,10 @@ export const ExhibitModal: React.FC<ExhibitModalProps> = ({
       subtitle: editSubtitle.trim() || exhibit.subtitle,
       artist: editArtist.trim(),
       description: editDescription.trim() || exhibit.description,
-      imageUrl: editImageUrl.trim() || exhibit.imageUrl,
+      imageUrl:
+        exhibit.id === 'ex_r4_image'
+          ? undefined
+          : editImageUrl.trim() || exhibit.imageUrl,
       videoPreset: editVideoPreset,
       customVideoUrl: editCustomVideoUrl.trim() || undefined,
       isCustomized: true,
@@ -1088,35 +1091,31 @@ export const ExhibitModal: React.FC<ExhibitModalProps> = ({
             </div>
 
             {/* Exhibit Media Showcase */}
-            {exhibit.type === 'image' && (
-              <div className="rounded-lg overflow-hidden bg-slate-950 border-2 border-slate-800 flex items-center justify-center min-h-[280px]">
-                {exhibit.id === 'ex_r1_image' && (!exhibit.imageUrl || !exhibit.imageUrl.startsWith('data:')) ? (
-                  <div className="w-full">
-                    <QinCeilingConstellationCanvas />
-                  </div>
-                ) : exhibit.imageUrl && !imgError ? (
-                  <img
-                    src={exhibit.imageUrl}
-                    alt={exhibit.title}
-                    referrerPolicy="no-referrer"
-                    onError={() => setImgError(true)}
-                    className="w-full max-h-[400px] object-contain"
-                  />
-                ) : (
-                  <div className="p-12 text-center space-y-2">
-                    <ImageIcon className="w-10 h-10 text-amber-400 mx-auto" />
-                    <p className="text-sm font-medium text-slate-200">
-                      {exhibit.title}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      픽셀 아트 디지털 컬렉션 아카이브
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            {(exhibit.imageUrl || exhibit.id === 'ex_r1_image') &&
+              (exhibit.type === 'image' ||
+                (exhibit.type === 'video' &&
+                  exhibit.imageUrl &&
+                  !exhibit.customVideoUrl &&
+                  (exhibit.id === 'ex_r4_video' || exhibit.title.includes('우주')))) && (
+                <div className="rounded-lg overflow-hidden bg-slate-950 border-2 border-slate-800 flex items-center justify-center min-h-[280px]">
+                  {exhibit.id === 'ex_r1_image' &&
+                  (!exhibit.imageUrl || !exhibit.imageUrl.startsWith('data:')) ? (
+                    <div className="w-full">
+                      <QinCeilingConstellationCanvas />
+                    </div>
+                  ) : exhibit.imageUrl && !imgError ? (
+                    <img
+                      src={exhibit.imageUrl}
+                      alt={exhibit.title}
+                      referrerPolicy="no-referrer"
+                      onError={() => setImgError(true)}
+                      className="w-full max-h-[400px] object-contain"
+                    />
+                  ) : null}
+                </div>
+              )}
 
-            {exhibit.type === 'video' && (
+            {exhibit.type === 'video' && !(exhibit.imageUrl && !exhibit.customVideoUrl && (exhibit.id === 'ex_r4_video' || exhibit.title.includes('우주'))) && (
               <div className="space-y-2">
                 <div className="relative rounded-lg overflow-hidden bg-slate-950 border-2 border-slate-800">
                   {exhibit.customVideoUrl ? (
@@ -1160,19 +1159,34 @@ export const ExhibitModal: React.FC<ExhibitModalProps> = ({
               </div>
             )}
 
-            {exhibit.type === 'text' && exhibit.textContent && (
-              <div className="p-6 rounded-lg bg-slate-950/90 border border-slate-800 space-y-4">
-                <blockquote className="pl-4 border-l-2 border-amber-400 text-base font-medium italic text-amber-100">
-                  {exhibit.textContent.leadQuote}
-                </blockquote>
-                <div className="space-y-3 text-sm text-slate-300 leading-relaxed">
-                  {exhibit.textContent.paragraphs.map((para, idx) => (
-                    <p key={idx}>{para}</p>
-                  ))}
-                </div>
-                {exhibit.textContent.curatorNote && (
-                  <div className="pt-3 border-t border-slate-800/80 text-xs text-slate-400">
-                    {exhibit.textContent.curatorNote}
+            {exhibit.type === 'text' && (
+              <div className="space-y-4">
+                {exhibit.imageUrl && !imgError && (
+                  <div className="rounded-lg overflow-hidden bg-slate-950 border-2 border-slate-800 flex items-center justify-center min-h-[220px]">
+                    <img
+                      src={exhibit.imageUrl}
+                      alt={exhibit.title}
+                      referrerPolicy="no-referrer"
+                      onError={() => setImgError(true)}
+                      className="w-full max-h-[360px] object-contain"
+                    />
+                  </div>
+                )}
+                {exhibit.textContent && (
+                  <div className="p-6 rounded-lg bg-slate-950/90 border border-slate-800 space-y-4">
+                    <blockquote className="pl-4 border-l-2 border-amber-400 text-base font-medium italic text-amber-100">
+                      {exhibit.textContent.leadQuote}
+                    </blockquote>
+                    <div className="space-y-3 text-sm text-slate-300 leading-relaxed">
+                      {exhibit.textContent.paragraphs.map((para, idx) => (
+                        <p key={idx}>{para}</p>
+                      ))}
+                    </div>
+                    {exhibit.textContent.curatorNote && (
+                      <div className="pt-3 border-t border-slate-800/80 text-xs text-slate-400">
+                        {exhibit.textContent.curatorNote}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
