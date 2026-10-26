@@ -39,7 +39,7 @@ import { ExhibitModal } from './components/ExhibitModal';
 import { QuestTracker } from './components/QuestTracker';
 import { soundEngine } from './utils/soundEngine';
 
-const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_v3';
+const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_canonical_v7';
 const ADMIN_PASSWORD_STORAGE_KEY = 'pixelverse_admin_pwd_v1';
 
 function getStoredAdminPassword(): string {
@@ -61,76 +61,41 @@ function saveAdminPassword(pwd: string) {
 function loadSavedExhibits(): ExhibitItem[] {
   try {
     const raw = localStorage.getItem(EXHIBITS_STORAGE_KEY);
-    if (!raw) return INITIAL_EXHIBITS;
+    if (!raw) {
+      localStorage.setItem(EXHIBITS_STORAGE_KEY, JSON.stringify(INITIAL_EXHIBITS));
+      return INITIAL_EXHIBITS.map((item) => ({ ...item }));
+    }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      const loaded = INITIAL_EXHIBITS.map((initialItem) => {
-        const savedItem = parsed.find((p: any) => p && p.id === initialItem.id);
-        if (!savedItem) return initialItem;
+      return INITIAL_EXHIBITS.map((canonicalItem) => {
+        const savedItem = parsed.find((p: any) => p && p.id === canonicalItem.id);
+        if (!savedItem || !savedItem.isCustomized) return { ...canonicalItem };
 
-        // "능선을 따라 뻗은 만리장성" (ex_r4_image) is strictly text with no imageUrl
-        if (initialItem.id === 'ex_r4_image') {
-          return {
-            ...initialItem,
-            ...savedItem,
-            type: 'text' as const,
-            title: savedItem.title && !savedItem.title.includes('부역') ? savedItem.title : '능선을 따라 뻗은 만리장성',
-            imageUrl: undefined,
-            textContent: savedItem.textContent || initialItem.textContent,
-          };
-        }
-
-        const isTargetUpdatedExhibit =
-          initialItem.id === 'ex_r2_image' ||
-          initialItem.id === 'ex_r4_video' ||
-          initialItem.id === 'ex_r4_text';
-        const isCustomImage =
-          !isTargetUpdatedExhibit &&
-          savedItem.imageUrl &&
-          (savedItem.imageUrl.startsWith('data:') || savedItem.imageUrl.startsWith('http'));
-
-        let title = savedItem.title || initialItem.title;
-        let imageUrl = isCustomImage ? savedItem.imageUrl : initialItem.imageUrl;
-
-        if (initialItem.id === 'ex_r2_image' && (!savedItem.title || savedItem.title.includes('부역'))) {
-          title = initialItem.title;
-        } else if (initialItem.id === 'ex_r4_text') {
-          title = '만리장성의 또 다른 목적';
-          imageUrl = initialItem.imageUrl; // 2사진 (유목민 목동 & 게르)
-        } else if (initialItem.id === 'ex_r4_video') {
-          title = '우주에서 본 만리장성?!';
-          imageUrl = initialItem.imageUrl; // 1사진 (외계인 우주선 망원경)
-        }
-
-        const itemType: ExhibitType = savedItem.type || initialItem.type;
+        const itemType: ExhibitType =
+          canonicalItem.id === 'ex_r4_image'
+            ? 'text'
+            : (savedItem.type || canonicalItem.type);
 
         const finalImageUrl =
-          initialItem.id === 'ex_r4_image'
+          canonicalItem.id === 'ex_r4_image'
             ? undefined
-            : initialItem.id === 'ex_r4_text'
-            ? initialItem.imageUrl
-            : (imageUrl || initialItem.imageUrl);
+            : canonicalItem.id === 'ex_r4_text'
+            ? canonicalItem.imageUrl
+            : (savedItem.imageUrl || canonicalItem.imageUrl);
 
         return {
-          ...initialItem,
+          ...canonicalItem,
           ...savedItem,
           type: itemType,
-          title,
           imageUrl: finalImageUrl,
-          textContent: savedItem.textContent || initialItem.textContent,
+          textContent: savedItem.textContent || canonicalItem.textContent,
         };
       });
-
-      try {
-        localStorage.setItem(EXHIBITS_STORAGE_KEY, JSON.stringify(loaded));
-      } catch {}
-
-      return loaded;
     }
   } catch (err) {
     console.error('Failed to load exhibits from localStorage:', err);
   }
-  return INITIAL_EXHIBITS;
+  return INITIAL_EXHIBITS.map((item) => ({ ...item }));
 }
 
 function saveExhibitsToStorage(items: ExhibitItem[]) {
