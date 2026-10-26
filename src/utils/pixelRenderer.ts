@@ -981,16 +981,37 @@ export function drawPixelExhibit(
         ctx.fillRect(ix + 12, iy + ih - 5, 4, 3);
         ctx.fillRect(ix + 48, iy + ih - 5, 4, 3);
       } else if (exhibit.roomId === 'room3') {
-        // Cyber brutalist pavilion pixel art
-        ctx.fillStyle = '#0f172a';
+        // Archaeological pit with excavated colored terracotta warrior (vivid pigments)
+        ctx.fillStyle = '#78350f'; // Earth pit soil
         ctx.fillRect(ix, iy, iw, ih);
-        ctx.fillStyle = '#38bdf8';
-        ctx.fillRect(ix + 18, iy + 5, 60, 12);
-        ctx.fillStyle = '#fef08a';
-        ctx.fillRect(ix + 26, iy + 8, 12, 6);
-        ctx.fillRect(ix + 48, iy + 8, 16, 6);
-        ctx.fillStyle = '#0284c7';
-        ctx.fillRect(ix + 6, iy + 18, iw - 12, 5);
+
+        // Lighter soil excavation layer
+        ctx.fillStyle = '#a16207';
+        ctx.fillRect(ix + 2, iy + 2, iw - 4, ih - 4);
+
+        // Terracotta head on left with skin tone & dark hair
+        ctx.fillStyle = '#fdba74'; // Flesh pigment face
+        ctx.fillRect(ix + 12, iy + 4, 18, 16);
+        ctx.fillStyle = '#1e293b'; // Topknot / dark hair
+        ctx.fillRect(ix + 14, iy + 3, 14, 4);
+        ctx.fillStyle = '#451a03'; // Eyes & facial contour
+        ctx.fillRect(ix + 16, iy + 10, 3, 2);
+        ctx.fillRect(ix + 23, iy + 10, 3, 2);
+        ctx.fillRect(ix + 18, iy + 15, 6, 2); // Mouth
+
+        // Warrior torso on right with turquoise & blue painted armor scales
+        ctx.fillStyle = '#0284c7'; // Turquoise/blue armor
+        ctx.fillRect(ix + 42, iy + 6, 32, 14);
+        // Colorful painted scales
+        for (let r = 0; r < 2; r++) {
+          for (let c = 0; c < 4; c++) {
+            ctx.fillStyle = (r + c) % 2 === 0 ? '#38bdf8' : '#818cf8'; // Vivid cyan/purple pigment
+            ctx.fillRect(ix + 44 + c * 7, iy + 8 + r * 5, 5, 3);
+          }
+        }
+        // Terracotta fragments
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(ix + 68, iy + 5, 6, 6);
       } else {
         // Room 4: Great Wall exhibits
         if (exhibit.id === 'ex_r4_video' || exhibit.title.includes('우주')) {

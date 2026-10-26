@@ -39,7 +39,7 @@ import { ExhibitModal } from './components/ExhibitModal';
 import { QuestTracker } from './components/QuestTracker';
 import { soundEngine } from './utils/soundEngine';
 
-const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_canonical_v7';
+const EXHIBITS_STORAGE_KEY = 'pixelverse_exhibits_canonical_v8';
 const ADMIN_PASSWORD_STORAGE_KEY = 'pixelverse_admin_pwd_v1';
 
 function getStoredAdminPassword(): string {

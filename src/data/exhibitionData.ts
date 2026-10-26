@@ -12,6 +12,7 @@ import mechanicalImg from '../assets/images/exhibit_mechanical_symphony_17913472
 import mobilizationImg from '../assets/images/exhibit_10years_mobilization.png';
 import greatwallSpaceImg from '../assets/images/exhibit_greatwall_space.jpg';
 import greatwallPurposeImg from '../assets/images/exhibit_greatwall_purpose.jpg';
+import terracottaColoredImg from '../assets/images/exhibit_terracotta_colored.jpeg';
 
 export const WORLD_WIDTH = 1280;
 export const WORLD_HEIGHT = 840;
@@ -325,7 +326,7 @@ export const INITIAL_EXHIBITS: ExhibitItem[] = [
     medium: '고해상도 고고학 발굴 기록 사진',
     description:
       '병마용은 원래 색깔이 칠해져 있었다. 청, 황, 홍, 녹, 갈색에 흑백이 결합된 하나의 예술작품이었다. 병마용은 대개 4단계 과정을 거쳐 만들어졌다. 가장 먼저 태토를 가지고 병마용의 부분을 만든다. 사람은 크게 얼굴, 몸통, 손, 발과 다리로 이루어진다. 말은 몸통, 머리, 목, 귀, 사지, 꼬리로 이루어진다. 이들을 만든 다음 부분을 결합시켜 병용과 마용을 완성한다. 그 다음 이들 용에 채색을 한다. 다음이 1000℃ 내외의 고온에서 이들을 구워내는 일이다. 이처럼 병마용은 4단계 과정을 거쳐 도용(陶俑)으로 완성되었다. 병마용이 2000년 이상의 역사 속에서도 제 모습을 간직할 수 있었었던 것은 이렇게 도용으로 만들어졌기 때문이다. 그런데 이들이 현재처럼 훼손된 것은, 일부는 습기로 탈색되고, 일부는 전란으로 인해 깨지고 부서지고 불에 탔기 때문이다. 설사 20세기까지 채색이 유지되었더라도 발굴 후 자연적으로 탈색되는 현상이 발생했다.',
-    imageUrl: cyberImg,
+    imageUrl: terracottaColoredImg,
     frameColor: '#38bdf8',
     accentColor: '#bae6fd',
   },
